@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scxml version="1.0" initial="ready" name="chronometer">
+    <state id="ready">
+        <transition event="watch.start" target="running"/>
+    </state>
+    <state id="running">
+        <transition event="watch.split" target="paused"/>
+        <transition event="watch.stop" target="stopped"/>
+    </state>
+    <state id="paused">
+        <transition event="watch.unsplit" target="running"/>
+        <transition event="watch.stop" target="stopped"/>
+    </state>
+    <state id="stopped">
+        <transition event="watch.reset" target="ready"/>
+    </state>
+</scxml>

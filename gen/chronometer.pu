@@ -1,0 +1,23 @@
+@startuml
+
+skinparam state {
+  FontStyle bold
+}
+
+note "chronometer state diagram" as TITLENOTE
+
+[*] -> ready
+    ready --> running : [watch.start] 
+
+    running --> paused : [watch.split] 
+
+    running --> stopped : [watch.stop] 
+
+    paused --> running : [watch.unsplit] 
+
+    paused --> stopped : [watch.stop] 
+
+    stopped --> ready : [watch.reset] 
+
+@enduml
+
