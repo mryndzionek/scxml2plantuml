@@ -1,0 +1,49 @@
+<?xml version="1.0" ?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0"
+       initial="off" name="blink">
+
+    <state id="off">
+        <!-- off state -->
+
+        <onentry>
+            <script>ledOff();</script>
+        </onentry>
+
+        <transition event="button.pressed" target="on"/>
+    </state>
+
+    <state id="on">
+        <!-- on state -->
+
+        <initial>
+            <transition target="ledon"/>
+        </initial>
+
+        <state id="ledon">
+            <onentry>
+                <script>ledOn();</script>
+                <script>setTimer();</script>
+            </onentry>
+
+            <transition event="timeout" target="ledoff"/>
+        </state>
+
+        <state id="ledoff">
+            <onentry>
+                <script>ledOff();</script>
+                <script>setTimer();</script>
+            </onentry>
+
+            <transition event="timeout" target="ledon"/>
+        </state>
+
+        <transition event="button.pressed" target="off"/>
+        
+        <onexit>
+            <script>cancelTimer();</script>
+        </onexit>
+    </state>
+
+</scxml>
+
+

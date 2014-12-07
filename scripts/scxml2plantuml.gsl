@@ -1,0 +1,106 @@
+.macro output_action(id, action)
+.           for my.action.script
+$(my.id) : $(string.trim (script.))
+.           endfor
+.           for my.action.send
+$(my.id) : send: $(send.event)
+.           endfor
+.           for my.action.assign
+$(my.id) : $(assign.location) = $(assign.expr)
+.           endfor
+.endmacro
+.
+.macro output_actions (state)
+.   if defined (my.state->onentry)
+$(my.state.id) : **entry /** 
+.       for my.state.onentry
+.           output_action (my.state.id, onentry)    
+.       endfor
+.   endif
+.   if defined (my.state->onexit)
+$(my.state.id) : **exit /** 
+.       for my.state.onexit
+.           output_action (my.state.id, onexit) 
+.       endfor
+.   endif
+.endmacro
+.
+.
+.macro output_transitions (state, transition)
+.   if defined (my.transition.target)
+    $(my.state.id) --> $(my.transition.target) : \
+.   else
+    $(my.state.id) --> $(my.state.id) : \
+.   endif
+.
+.   if defined (my.transition.event)
+[$(my.transition.event)] \
+.   endif
+.   if defined (my.transition.event) & defined (my.transition.cond)
+& \\n\
+.   endif
+.   if defined (my.transition.cond)
+[$(my.transition.cond)] \
+.   endif
+.   if defined (my.transition->script) | defined (my.transition->send) | defined (my.transition->assign)
+/ \
+.   endif
+.   for my.transition.script
+$(string.trim (script.)) \\n \
+.   endfor
+.   for my.transition.send
+send: $(send.event) \\n \
+.   endfor
+.   for my.transition.assign
+$(assign.location) = $(assign.expr) \\n \
+.   endfor
+
+.endmacro
+.
+.macro traverse_model (state)
+.   if defined (my.state->state)
+state $(my.state.id) {
+.       output_actions (state)
+.       if defined (my.state->initial)
+    [*] -> $(my.state->initial->transition.target)
+.       elsif defined (my.state.initial)
+    [*] -> $(my.state.initial)
+.       endif
+.       for my.state.transition
+.           output_transitions (my.state, transition)
+
+.       endfor
+.       for my.state.state
+.           traverse_model (state)
+.       endfor
+}
+
+.   else
+.       output_actions (state)
+.       for my.state.transition
+.           output_transitions (my.state, transition)
+
+.       endfor
+.   endif
+.endmacro
+.
+.echo "Generating ../gen/$(file.basename(filename)).pu..."
+.output "../gen/$(file.basename(filename)).pu"
+.
+@startuml
+
+skinparam state {
+  FontStyle bold
+}
+
+.if defined (scxml.name)
+note "$(scxml.name) state diagram" as TITLENOTE
+.endif
+
+[*] -> $(scxml.initial)
+.
+.for scxml.state
+.   traverse_model (state)
+.endfor
+@enduml
+

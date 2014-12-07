@@ -1,0 +1,33 @@
+@startuml
+
+skinparam state {
+  FontStyle bold
+}
+
+note "blink state diagram" as TITLENOTE
+
+[*] -> off
+off : **entry /** 
+off : ledOff();
+    off --> on : [button.pressed] 
+
+state on {
+on : **exit /** 
+on : cancelTimer();
+    [*] -> ledon
+    on --> off : [button.pressed] 
+
+ledon : **entry /** 
+ledon : ledOn();
+ledon : setTimer();
+    ledon --> ledoff : [timeout] 
+
+ledoff : **entry /** 
+ledoff : ledOff();
+ledoff : setTimer();
+    ledoff --> ledon : [timeout] 
+
+}
+
+@enduml
+

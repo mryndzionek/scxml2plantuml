@@ -1,0 +1,29 @@
+@startuml
+
+skinparam state {
+  FontStyle bold
+}
+
+note "micorwave-01 state diagram" as TITLENOTE
+
+[*] -> off
+    off --> on : [turn.on] 
+
+state on {
+    [*] -> idle
+    on --> off : [turn.off] 
+
+    on --> off : [timer >= cook_time] 
+
+    idle --> cooking : [door_closed] 
+
+    idle --> cooking : [door.close] / door_closed = true \n 
+
+    cooking --> idle : [door.open] / door_closed = false \n 
+
+    cooking --> cooking : [time] / timer = timer + 1 \n 
+
+}
+
+@enduml
+
