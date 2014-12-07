@@ -27,9 +27,16 @@ cd model
 Examples
 --------
 
+* simple LED blink example
 ![led_blink](img/blink.png?raw=true "LED blinker UML state chart diagram")
+
+* microwave oven state machine taken from [SCXML](http://www.w3.org/TR/scxml/#N11829) site
 ![microwave-01](img/microwave-01.png?raw=true "Simple microwave UML state chart diagram")
+
+* another microwave oven state machine taken from [SCXML](http://www.w3.org/TR/scxml/#MicrowaveParallel) site
 ![microwave-02](img/microwave-02.png?raw=true "Simple microwave UML state chart diagram")
+
+* calculator state machine taken from [SCXML](http://www.w3.org/TR/scxml/#N11840) site
 ![calc](img/calc.png?raw=true "Calculator UML state chart diagram")
 
 Contact
