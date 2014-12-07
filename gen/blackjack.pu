@@ -1,0 +1,50 @@
+@startuml
+
+skinparam state {
+  FontStyle bold
+}
+
+
+[*] -> master
+state master {
+    [*] -> _home
+    master --> newdealer : [new_dealer] 
+
+    master --> _home : [mumble] 
+
+    master --> _home : [silence] 
+
+_home : **entry /** 
+_home :         _data = {};
+    _home --> welcome : [success] 
+
+    welcome --> intro2 : [success] 
+
+    intro2 --> evaldeal : [success] 
+
+evaldeal : **entry /** 
+evaldeal : enterEvalDeal();
+    evaldeal --> askhit : [success] 
+
+    askhit --> playnewcard : [hit] 
+
+    askhit --> playdone : [stand] 
+
+    playnewcard --> playdone : [success] & \n[blackjack.gettotalof('caller') >= 21] 
+
+    playnewcard --> askhit : [success] 
+
+playdone : **entry /** 
+playdone : enterPlayDone();
+    playdone --> intro2 : [playagain] 
+
+    playdone --> _home : [quit] 
+
+newdealer : **entry /** 
+newdealer : enterNewDealer();
+    newdealer --> welcome : [success] 
+
+}
+
+@enduml
+

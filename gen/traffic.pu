@@ -1,0 +1,52 @@
+@startuml
+
+skinparam state {
+  FontStyle bold
+}
+
+
+[*] -> intro
+    intro --> playads : [success] & \n[sessionchrome.playads] 
+
+    intro --> shouldgoback : [success] & \n[!sessionchrome.playads && aniquality] 
+
+    intro --> startover : [success] & \n[!sessionchrome.playads && !aniquality] 
+
+    playads --> shouldgoback : [success] & \n[aniquality] 
+
+    playads --> startover : [success] & \n[!aniquality] 
+
+startover : **entry /** 
+startover : enterStartOver();
+    startover --> shouldgoback : [success] 
+
+    startover --> startover : [doover] 
+
+    startover --> intro : [restart] 
+
+    shouldgoback --> highwayreport : [highway] 
+
+    shouldgoback --> startover : [go_back] 
+
+    shouldgoback --> shouldgoback : [doover] 
+
+    shouldgoback --> intro : [restart] 
+
+    highwayreport --> playhighway : [highway] 
+
+    highwayreport --> startover : [go_back] 
+
+    highwayreport --> highwayreport : [doover] 
+
+    highwayreport --> fullreport : [fullreport] 
+
+    highwayreport --> intro : [restart] 
+
+    fullreport --> highwayreport : [go_back] 
+
+    fullreport --> startover : [new_city] 
+
+    playhighway --> highwayreport : [go_back] 
+
+@enduml
+

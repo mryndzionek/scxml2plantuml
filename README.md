@@ -36,6 +36,10 @@ Examples
 * another microwave oven state machine taken from [SCXML](http://www.w3.org/TR/scxml/#MicrowaveParallel) site
 ![microwave-02](img/microwave-02.png?raw=true "Simple microwave UML state chart diagram")
 
+* Blackjack and Traffic Report state machine taken from [SCXML](http://www.w3.org/TR/scxml/#invokeex) site
+![blackjack](img/blackjack.png?raw=true "Blackjack UML state chart diagram")
+![traffic](img/traffic.png?raw=true "Traffic report UML state chart diagram")
+
 * calculator state machine taken from [SCXML](http://www.w3.org/TR/scxml/#N11840) site
 ![calc](img/calc.png?raw=true "Calculator UML state chart diagram")
 
