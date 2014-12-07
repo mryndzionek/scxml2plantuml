@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0"
-       initial="on" datamodel="ecmascript" name="calc">
+       initial="on" datamodel="ecmascript">
     <datamodel>
          <data id="long_expr" />
          <data id="short_expr" expr="0" />

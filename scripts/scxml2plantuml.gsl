@@ -11,10 +11,10 @@ $(my.id) : $(assign.location) = $(assign.expr)
 .endmacro
 .
 .macro output_actions (state)
-.   if defined (my.state->onentry)
+.   if defined (my.state->onenter)
 $(my.state.id) : **entry /** 
-.       for my.state.onentry
-.           output_action (my.state.id, onentry)    
+.       for my.state.onenter
+.           output_action (my.state.id, onenter)    
 .       endfor
 .   endif
 .   if defined (my.state->onexit)
@@ -57,7 +57,7 @@ $(assign.location) = $(assign.expr) \\n \
 
 .endmacro
 .
-.macro traverse_model (state)
+.macro output_state (state, is_pp)
 .   if defined (my.state->state)
 state $(my.state.id) {
 .       output_actions (state)
@@ -70,9 +70,21 @@ state $(my.state.id) {
 .           output_transitions (my.state, transition)
 
 .       endfor
-.       for my.state.state
-.           traverse_model (state)
-.       endfor
+.       if (my.is_pp)
+.           for my.state.state
+.               output_parallel (state, 0)
+.           endfor
+.           for my.state.parallel
+.               output_parallel (parallel, 1)
+.           endfor
+.       else
+.           for my.state.state
+.               output_state (state, 0)
+.           endfor
+.           for my.state.parallel
+.               output_state (parallel, 1)
+.           endfor
+.       endif
 }
 
 .   else
@@ -81,6 +93,45 @@ state $(my.state.id) {
 .           output_transitions (my.state, transition)
 
 .       endfor
+.   endif
+.endmacro
+.
+.macro output_parallel (state, is_pp)
+.   if defined (my.state->state)
+note "$(my.state.id)" as $(MY.STATE.ID)
+.       output_actions (state)
+.       if defined (my.state->initial)
+    [*] -> $(my.state->initial->transition.target)
+.       elsif defined (my.state.initial)
+    [*] -> $(my.state.initial)
+.       endif
+.       for my.state.transition
+.           output_transitions (my.state, transition)
+
+.       endfor
+.       if (my.is_pp)
+.           for my.state.state
+.               output_parallel (state, 0)
+.           endfor
+.           for my.state.parallel
+.               output_parallel (parallel, 1)
+.           endfor
+.       else
+.           for my.state.state
+.               output_state (state, 0)
+.           endfor
+.           for my.state.parallel
+.               output_state (parallel, 1)
+.           endfor
+.       endif
+.   else
+.       output_actions (state)
+.       for my.state.transition
+.           output_transitions (my.state, transition)
+.       endfor
+.   endif
+.   if !last ()
+--
 .   endif
 .endmacro
 .
@@ -100,7 +151,10 @@ note "$(scxml.name) state diagram" as TITLENOTE
 [*] -> $(scxml.initial)
 .
 .for scxml.state
-.   traverse_model (state)
+.   output_state (state, 0)
+.endfor
+.for scxml.parallel
+.   output_state (parallel, 1)
 .endfor
 @enduml
 

@@ -1,0 +1,39 @@
+@startuml
+
+skinparam state {
+  FontStyle bold
+}
+
+note "micorwave-02 state diagram" as TITLENOTE
+
+[*] -> oven
+state oven {
+note "engine" as ENGINE
+    [*] -> off
+    off --> on : [turn.on] 
+
+state on {
+    [*] -> idle
+    on --> off : [turn.off] 
+
+    on --> off : [timer >= cook_time] 
+
+    idle --> cooking : [in('closed')] 
+
+    cooking --> idle : [in('open')] 
+
+    cooking --> cooking : [time] / timer = timer + 1 \n 
+
+}
+
+--
+note "door" as DOOR
+    [*] -> closed
+    closed --> open : [door.open] 
+
+    open --> closed : [door.close] 
+
+}
+
+@enduml
+

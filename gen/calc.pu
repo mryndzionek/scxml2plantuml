@@ -4,7 +4,6 @@ skinparam state {
   FontStyle bold
 }
 
-note "calc state diagram" as TITLENOTE
 
 [*] -> on
 state wrapper {
@@ -18,8 +17,6 @@ state wrapper {
     wrapper --> wrapper : [op.insert] 
 
 state on {
-on : **entry /** 
-on : send: display.update
     [*] -> ready
     on --> on : [c] 
 
@@ -33,15 +30,10 @@ state ready {
 
     ready --> frac1 : [point] / short_expr = '' \n 
 
-begin : **entry /** 
-begin : send: display.update
     begin --> negated1 : [oper.minus] 
 
 }
 
-negated1 : **entry /** 
-negated1 : send: display.update
-negated1 : short_expr = '-'
     negated1 --> zero1 : [digit.0] 
 
     negated1 --> int1 : [digit] 
@@ -55,22 +47,14 @@ state operand1 {
 
     zero1 --> frac1 : [point] 
 
-int1 : **entry /** 
-int1 : send: display.update
-int1 : short_expr = short_expr+_event.name.substr(_event.name.lastindexof('.')+1)
     int1 --> frac1 : [point] 
 
     int1 --> int1 : [digit] / send: display.update \n short_expr = short_expr+_event.name.substr(_event.name.lastindexof('.')+1) \n 
 
-frac1 : **entry /** 
-frac1 : send: display.update
-frac1 : short_expr = short_expr+'.'
     frac1 --> frac1 : [digit] / send: display.update \n short_expr = short_expr+_event.name.substr(_event.name.lastindexof('.')+1) \n 
 
 }
 
-opentered : **entry /** 
-opentered : send: op.insert
     opentered --> negated2 : [oper.minus] 
 
     opentered --> frac2 : [point] 
@@ -79,9 +63,6 @@ opentered : send: op.insert
 
     opentered --> int2 : [digit] 
 
-negated2 : **entry /** 
-negated2 : send: display.update
-negated2 : short_expr = '-'
     negated2 --> zero2 : [digit.0] 
 
     negated2 --> int2 : [digit] 
@@ -97,16 +78,10 @@ state operand2 {
 
     zero2 --> frac2 : [point] 
 
-int2 : **entry /** 
-int2 : send: display.update
-int2 : short_expr = short_expr+_event.name.substr(_event.name.lastindexof('.')+1)
     int2 --> int2 : [digit] / send: display.update \n short_expr = short_expr+_event.name.substr(_event.name.lastindexof('.')+1) \n 
 
     int2 --> frac2 : [point] 
 
-frac2 : **entry /** 
-frac2 : send: display.update
-frac2 : short_expr = short_expr +'.'
     frac2 --> frac2 : [digit] / send: display.update \n short_expr = short_expr +_event.name.substr(_event.name.lastindexof('.')+1) \n 
 
 }

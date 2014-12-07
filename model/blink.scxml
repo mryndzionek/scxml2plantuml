@@ -5,9 +5,9 @@
     <state id="off">
         <!-- off state -->
 
-        <onentry>
+        <onenter>
             <script>ledOff();</script>
-        </onentry>
+        </onenter>
 
         <transition event="button.pressed" target="on"/>
     </state>
@@ -20,19 +20,19 @@
         </initial>
 
         <state id="ledon">
-            <onentry>
+            <onenter>
                 <script>ledOn();</script>
                 <script>setTimer();</script>
-            </onentry>
+            </onenter>
 
             <transition event="timeout" target="ledoff"/>
         </state>
 
         <state id="ledoff">
-            <onentry>
+            <onenter>
                 <script>ledOff();</script>
                 <script>setTimer();</script>
-            </onentry>
+            </onenter>
 
             <transition event="timeout" target="ledon"/>
         </state>
