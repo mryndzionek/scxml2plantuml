@@ -27,7 +27,7 @@ cd model
 Examples
 --------
 
-* simple LED blink example
+* simple LED blink example                                                       
 ![led_blink](img/blink.png?raw=true "LED blinker UML state chart diagram")
 
 * microwave oven state machine taken from [SCXML](http://www.w3.org/TR/scxml/#N11829) site
