@@ -1,0 +1,87 @@
+@startuml
+
+skinparam state {
+  FontStyle bold
+}
+
+note "game state diagram" as TITLENOTE
+
+[*] -> ACTIVE
+state ACTIVE {
+ACTIVE : **entry /** 
+ACTIVE : LED1_OFF;
+ACTIVE : LED2_OFF;
+    [*] -> PAUSE
+state PAUSE {
+PAUSE : **entry /** 
+PAUSE : LED1_OFF;
+PAUSE : ARM_TIMER(BLINK_INTERVAL2_MS, TIMEOUT);
+    PAUSE -> ON : TIMEOUT 
+
+    PAUSE -> LOSE : BUTTON_PRESSED 
+
+}
+
+state ON {
+ON : **entry /** 
+ON : LED1_ON;
+ON : ARM_TIMER(FIBER_CTX(game)->bl_on_ms, TIMEOUT);
+    ON --> PAUSE : TIMEOUT 
+
+    ON --> WIN : BUTTON_PRESSED 
+
+}
+
+}
+
+state RESULT {
+RESULT : **entry /** 
+RESULT : ARM_TIMER(END_INTERVAL_MS, END_TIMEOUT);
+RESULT : **exit /** 
+RESULT : DISARM_TIMER(TIMEOUT);
+RESULT : DISARM_TIMER(END_TIMEOUT);
+    RESULT --> ACTIVE : END_TIMEOUT 
+
+state WIN {
+WIN : **entry /** 
+WIN : LED2_ON;                                                              
+WIN : [FIBER_CTX(game)->bl_on_ms  > 200] / FIBER_CTX(game)->bl_on_ms -= 200;
+WIN : [FIBER_CTX(game)->bl_on_ms  > 40] / FIBER_CTX(game)->bl_on_ms -= 40;  
+WIN : [else] / FIBER_CTX(game)->bl_on_ms = BLINK_INTERVAL2_MS;              
+    WIN --> WIN : BUTTON_PRESSED 
+
+}
+
+state LOSE {
+LOSE : **entry /** 
+LOSE : LED2_OFF;
+LOSE : FIBER_CTX(game)->bl_on_ms = BLINK_INTERVAL2_MS;
+    [*] -> LEDON
+state LEDON {
+LEDON : **entry /** 
+LEDON : LED1_ON;
+LEDON : LED2_OFF;
+LEDON : ARM_TIMER(50, TIMEOUT);
+    LEDON --> LEDON : BUTTON_PRESSED 
+
+    LEDON --> LEDOFF : TIMEOUT 
+
+}
+
+state LEDOFF {
+LEDOFF : **entry /** 
+LEDOFF : LED1_ON;               
+LEDOFF : LED2_OFF;              
+LEDOFF : ARM_TIMER(50, TIMEOUT);
+    LEDOFF --> LEDOFF : BUTTON_PRESSED 
+
+    LEDOFF --> LEDON : TIMEOUT 
+
+}
+
+}
+
+}
+
+@enduml
+

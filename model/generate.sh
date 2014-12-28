@@ -9,6 +9,7 @@ if ! [ -e "../img" ];then
 fi
 
 gsl -q -script:scxml2plantuml blink.scxml
+gsl -q -script:scxml2plantuml game.scxml
 gsl -q -script:scxml2plantuml microwave-01.scxml
 gsl -q -script:scxml2plantuml microwave-02.scxml
 gsl -q -script:scxml2plantuml chronometer.scxml

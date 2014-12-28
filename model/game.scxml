@@ -1,0 +1,107 @@
+<?xml version="1.0" ?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0"
+       initial="ACTIVE" name="game">
+
+    <state id="ACTIVE">
+
+        <initial>
+            <transition target="PAUSE"/>
+        </initial>
+
+        <onenter>
+            <script>LED1_OFF;</script>
+            <script>LED2_OFF;</script>
+        </onenter>
+
+        <state id="PAUSE">
+            <onenter>
+                <script>LED1_OFF;</script>
+                <script>ARM_TIMER(BLINK_INTERVAL2_MS, TIMEOUT);</script>
+            </onenter>
+
+            <transition event="TIMEOUT" target="ON" type="external"/>
+            <transition event="BUTTON_PRESSED" target="LOSE" type="external"/>
+        </state>
+
+        <state id="ON">
+            <onenter>
+                <script>LED1_ON;</script>
+                <script>ARM_TIMER(FIBER_CTX(game)->bl_on_ms, TIMEOUT);</script>
+            </onenter>
+
+            <transition event="TIMEOUT" target="PAUSE"/>
+            <transition event="BUTTON_PRESSED" target="WIN"/>
+        </state>
+
+
+    </state>
+
+    <state id="RESULT">
+
+        <onenter>
+            <script>ARM_TIMER(END_INTERVAL_MS, END_TIMEOUT);</script>
+        </onenter>
+
+        <onexit>
+            <script>DISARM_TIMER(TIMEOUT);</script>
+            <script>DISARM_TIMER(END_TIMEOUT);</script>
+        </onexit>
+
+        <transition event="END_TIMEOUT" target="ACTIVE"/>
+
+        <state id="WIN">
+            <onenter>
+                <script>
+                LED2_ON;
+                [FIBER_CTX(game)->bl_on_ms  > 200] / FIBER_CTX(game)->bl_on_ms -= 200;
+                [FIBER_CTX(game)->bl_on_ms  > 40] / FIBER_CTX(game)->bl_on_ms -= 40;
+                [else] / FIBER_CTX(game)->bl_on_ms = BLINK_INTERVAL2_MS;
+                </script>
+            </onenter>
+
+            <transition event="BUTTON_PRESSED" target="WIN"/>
+        </state>
+
+        <state id="LOSE">
+
+            <initial>
+                <transition target="LEDON"/>
+            </initial>
+
+            <onenter>
+                <script>LED2_OFF;</script>
+                <script>FIBER_CTX(game)->bl_on_ms = BLINK_INTERVAL2_MS;</script>
+            </onenter>
+
+            <state id="LEDON">
+
+                <onenter>
+                    <script>LED1_ON;</script>
+                    <script>LED2_OFF;</script>
+                    <script>ARM_TIMER(50, TIMEOUT);</script>
+                </onenter>
+
+                <transition event="BUTTON_PRESSED" target="LEDON"/>
+                <transition event="TIMEOUT" target="LEDOFF"/>
+            </state>
+
+            <state id="LEDOFF">
+
+                <onenter>
+                    <script>
+                        LED1_ON;
+                        LED2_OFF;
+                        ARM_TIMER(50, TIMEOUT);
+                    </script>
+                </onenter>
+
+                <transition event="BUTTON_PRESSED" target="LEDOFF"/>
+                <transition event="TIMEOUT" target="LEDON"/>
+            </state>
+        </state>
+
+    </state>
+
+</scxml>
+
+
