@@ -7,25 +7,34 @@ skinparam state {
 note "blink state diagram" as TITLENOTE
 
 [*] -> off
+state off {
 off : **entry /** 
 off : ledOff();
-    off --> on : [button.pressed] 
+    off --> on : button.pressed 
+
+}
 
 state on {
 on : **exit /** 
 on : cancelTimer();
     [*] -> ledon
-    on --> off : [button.pressed] 
+    on --> off : button.pressed 
 
+state ledon {
 ledon : **entry /** 
 ledon : ledOn();
 ledon : setTimer();
-    ledon --> ledoff : [timeout] 
+    ledon --> ledoff : timeout 
 
+}
+
+state ledoff {
 ledoff : **entry /** 
 ledoff : ledOff();
 ledoff : setTimer();
-    ledoff --> ledon : [timeout] 
+    ledoff --> ledon : timeout 
+
+}
 
 }
 

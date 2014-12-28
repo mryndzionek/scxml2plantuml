@@ -8,41 +8,65 @@ skinparam state {
 [*] -> master
 state master {
     [*] -> _home
-    master --> newdealer : [new_dealer] 
+    master --> NewDealer : new_dealer 
 
-    master --> _home : [mumble] 
+    master --> _home : mumble 
 
-    master --> _home : [silence] 
+    master --> _home : silence 
 
+state _home {
 _home : **entry /** 
-_home :         _data = {};
-    _home --> welcome : [success] 
+_home : _data = {};
+    _home --> Welcome : success 
 
-    welcome --> intro2 : [success] 
+}
 
-    intro2 --> evaldeal : [success] 
+state Welcome {
+    Welcome --> Intro2 : success 
 
-evaldeal : **entry /** 
-evaldeal : enterEvalDeal();
-    evaldeal --> askhit : [success] 
+}
 
-    askhit --> playnewcard : [hit] 
+state Intro2 {
+    Intro2 --> EvalDeal : success 
 
-    askhit --> playdone : [stand] 
+}
 
-    playnewcard --> playdone : [success] & \n[blackjack.gettotalof('caller') >= 21] 
+state EvalDeal {
+EvalDeal : **entry /** 
+EvalDeal : enterEvalDeal();
+    EvalDeal --> AskHit : success 
 
-    playnewcard --> askhit : [success] 
+}
 
-playdone : **entry /** 
-playdone : enterPlayDone();
-    playdone --> intro2 : [playagain] 
+state AskHit {
+    AskHit --> PlayNewCard : hit 
 
-    playdone --> _home : [quit] 
+    AskHit --> PlayDone : stand 
 
-newdealer : **entry /** 
-newdealer : enterNewDealer();
-    newdealer --> welcome : [success] 
+}
+
+state PlayNewCard {
+    PlayNewCard --> PlayDone : success & \n[blackjack.GetTotalOf('caller') >= 21] 
+
+    PlayNewCard --> AskHit : success 
+
+}
+
+state PlayDone {
+PlayDone : **entry /** 
+PlayDone : enterPlayDone();
+    PlayDone --> Intro2 : playagain 
+
+    PlayDone --> _home : quit 
+
+}
+
+state NewDealer {
+NewDealer : **entry /** 
+NewDealer : enterNewDealer();
+    NewDealer --> Welcome : success 
+
+}
 
 }
 

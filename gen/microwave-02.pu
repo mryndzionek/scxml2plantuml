@@ -10,28 +10,43 @@ note "micorwave-02 state diagram" as TITLENOTE
 state oven {
 note "engine" as ENGINE
     [*] -> off
-    off --> on : [turn.on] 
+state off {
+    off --> on : turn.on 
+
+}
 
 state on {
     [*] -> idle
-    on --> off : [turn.off] 
+    on --> off : turn.off 
 
     on --> off : [timer >= cook_time] 
 
-    idle --> cooking : [in('closed')] 
+state idle {
+    idle --> cooking : [In('closed')] 
 
-    cooking --> idle : [in('open')] 
+}
 
-    cooking --> cooking : [time] / timer = timer + 1 \n 
+state cooking {
+    cooking --> idle : [In('open')] 
+
+    cooking --> cooking : time / timer = timer + 1 \n 
+
+}
 
 }
 
 --
 note "door" as DOOR
     [*] -> closed
-    closed --> open : [door.open] 
+state closed {
+    closed --> open : door.open 
 
-    open --> closed : [door.close] 
+}
+
+state open {
+    open --> closed : door.close 
+
+}
 
 }
 

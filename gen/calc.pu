@@ -8,81 +8,114 @@ skinparam state {
 [*] -> on
 state wrapper {
     [*] -> on
-    wrapper --> wrapper : [calc.do] / short_expr = ''+ res \n long_expr = '' \n res = 0 \n 
+    wrapper --> wrapper : CALC.DO / short_expr = ''+ res \n long_expr = '' \n res = 0 \n 
 
-    wrapper --> wrapper : [calc.sub] / send: display.update \n res = eval(long_expr) \n short_expr = '' \n 
+    wrapper --> wrapper : CALC.SUB / send: DISPLAY.UPDATE \n res = eval(long_expr) \n short_expr = '' \n 
 
-    wrapper --> wrapper : [display.update] 
+    wrapper --> wrapper : DISPLAY.UPDATE 
 
-    wrapper --> wrapper : [op.insert] 
+    wrapper --> wrapper : OP.INSERT 
 
 state on {
     [*] -> ready
-    on --> on : [c] 
+    on --> on : C 
 
 state ready {
     [*] -> begin
-    ready --> opentered : [oper] 
+    ready --> opEntered : OPER 
 
-    ready --> zero1 : [digit.0] / short_expr = '' \n 
+    ready --> zero1 : DIGIT.0 / short_expr = '' \n 
 
-    ready --> int1 : [digit] / short_expr = '' \n 
+    ready --> int1 : DIGIT / short_expr = '' \n 
 
-    ready --> frac1 : [point] / short_expr = '' \n 
+    ready --> frac1 : POINT / short_expr = '' \n 
 
-    begin --> negated1 : [oper.minus] 
+state begin {
+    begin --> negated1 : OPER.MINUS 
 
 }
 
-    negated1 --> zero1 : [digit.0] 
+state result {
+}
 
-    negated1 --> int1 : [digit] 
+}
 
-    negated1 --> frac1 : [point] 
+state negated1 {
+    negated1 --> zero1 : DIGIT.0 
+
+    negated1 --> int1 : DIGIT 
+
+    negated1 --> frac1 : POINT 
+
+}
 
 state operand1 {
-    operand1 --> opentered : [oper] 
+    operand1 --> opEntered : OPER 
 
-    zero1 --> int1 : [digit] & \n[_event.name != 'digit.0'] 
+state zero1 {
+    zero1 --> int1 : DIGIT & \n[_event.name != 'DIGIT.0'] 
 
-    zero1 --> frac1 : [point] 
-
-    int1 --> frac1 : [point] 
-
-    int1 --> int1 : [digit] / send: display.update \n short_expr = short_expr+_event.name.substr(_event.name.lastindexof('.')+1) \n 
-
-    frac1 --> frac1 : [digit] / send: display.update \n short_expr = short_expr+_event.name.substr(_event.name.lastindexof('.')+1) \n 
+    zero1 --> frac1 : POINT 
 
 }
 
-    opentered --> negated2 : [oper.minus] 
+state int1 {
+    int1 --> frac1 : POINT 
 
-    opentered --> frac2 : [point] 
+    int1 --> int1 : DIGIT / send: DISPLAY.UPDATE \n short_expr = short_expr+_event.name.substr(_event.name.lastIndexOf('.')+1) \n 
 
-    opentered --> zero2 : [digit.0] 
+}
 
-    opentered --> int2 : [digit] 
+state frac1 {
+    frac1 --> frac1 : DIGIT / send: DISPLAY.UPDATE \n short_expr = short_expr+_event.name.substr(_event.name.lastIndexOf('.')+1) \n 
 
-    negated2 --> zero2 : [digit.0] 
+}
 
-    negated2 --> int2 : [digit] 
+}
 
-    negated2 --> frac2 : [point] 
+state opEntered {
+    opEntered --> negated2 : OPER.MINUS 
+
+    opEntered --> frac2 : POINT 
+
+    opEntered --> zero2 : DIGIT.0 
+
+    opEntered --> int2 : DIGIT 
+
+}
+
+state negated2 {
+    negated2 --> zero2 : DIGIT.0 
+
+    negated2 --> int2 : DIGIT 
+
+    negated2 --> frac2 : POINT 
+
+}
 
 state operand2 {
-    operand2 --> opentered : [oper] 
+    operand2 --> opEntered : OPER 
 
-    operand2 --> result : [equals] 
+    operand2 --> result : EQUALS 
 
-    zero2 --> int2 : [digit] & \n[_event.name != 'digit.0'] 
+state zero2 {
+    zero2 --> int2 : DIGIT & \n[_event.name != 'DIGIT.0'] 
 
-    zero2 --> frac2 : [point] 
+    zero2 --> frac2 : POINT 
 
-    int2 --> int2 : [digit] / send: display.update \n short_expr = short_expr+_event.name.substr(_event.name.lastindexof('.')+1) \n 
+}
 
-    int2 --> frac2 : [point] 
+state int2 {
+    int2 --> int2 : DIGIT / send: DISPLAY.UPDATE \n short_expr = short_expr+_event.name.substr(_event.name.lastIndexOf('.')+1) \n 
 
-    frac2 --> frac2 : [digit] / send: display.update \n short_expr = short_expr +_event.name.substr(_event.name.lastindexof('.')+1) \n 
+    int2 --> frac2 : POINT 
+
+}
+
+state frac2 {
+    frac2 --> frac2 : DIGIT / send: DISPLAY.UPDATE \n short_expr = short_expr +_event.name.substr(_event.name.lastIndexOf('.')+1) \n 
+
+}
 
 }
 

@@ -5,48 +5,69 @@ skinparam state {
 }
 
 
-[*] -> intro
-    intro --> playads : [success] & \n[sessionchrome.playads] 
+[*] -> Intro
+state Intro {
+    Intro --> PlayAds : success & \n[sessionChrome.playAds] 
 
-    intro --> shouldgoback : [success] & \n[!sessionchrome.playads && aniquality] 
+    Intro --> ShouldGoBack : success & \n[!sessionChrome.playAds && ANIQuality] 
 
-    intro --> startover : [success] & \n[!sessionchrome.playads && !aniquality] 
+    Intro --> StartOver : success & \n[!sessionChrome.playAds && !ANIQuality] 
 
-    playads --> shouldgoback : [success] & \n[aniquality] 
+}
 
-    playads --> startover : [success] & \n[!aniquality] 
+state PlayAds {
+    PlayAds --> ShouldGoBack : success & \n[ANIQuality] 
 
-startover : **entry /** 
-startover : enterStartOver();
-    startover --> shouldgoback : [success] 
+    PlayAds --> StartOver : success & \n[!ANIQuality] 
 
-    startover --> startover : [doover] 
+}
 
-    startover --> intro : [restart] 
+state StartOver {
+StartOver : **entry /** 
+StartOver : enterStartOver();
+    StartOver --> ShouldGoBack : success 
 
-    shouldgoback --> highwayreport : [highway] 
+    StartOver --> StartOver : doOver 
 
-    shouldgoback --> startover : [go_back] 
+    StartOver --> Intro : restart 
 
-    shouldgoback --> shouldgoback : [doover] 
+}
 
-    shouldgoback --> intro : [restart] 
+state ShouldGoBack {
+    ShouldGoBack --> HighwayReport : highWay 
 
-    highwayreport --> playhighway : [highway] 
+    ShouldGoBack --> StartOver : go_back 
 
-    highwayreport --> startover : [go_back] 
+    ShouldGoBack --> ShouldGoBack : doOver 
 
-    highwayreport --> highwayreport : [doover] 
+    ShouldGoBack --> Intro : restart 
 
-    highwayreport --> fullreport : [fullreport] 
+}
 
-    highwayreport --> intro : [restart] 
+state HighwayReport {
+    HighwayReport --> PlayHighway : highway 
 
-    fullreport --> highwayreport : [go_back] 
+    HighwayReport --> StartOver : go_back 
 
-    fullreport --> startover : [new_city] 
+    HighwayReport --> HighwayReport : doOver 
 
-    playhighway --> highwayreport : [go_back] 
+    HighwayReport --> FullReport : fullreport 
+
+    HighwayReport --> Intro : restart 
+
+}
+
+state FullReport {
+    FullReport --> HighwayReport : go_back 
+
+    FullReport --> StartOver : new_city 
+
+}
+
+state PlayHighway {
+    PlayHighway --> HighwayReport : go_back 
+
+}
 
 @enduml
 
