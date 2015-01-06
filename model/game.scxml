@@ -47,7 +47,8 @@
             <script>DISARM_TIMER(END_TIMEOUT);</script>
         </onexit>
 
-        <transition event="END_TIMEOUT" target="ACTIVE"/>
+        <transition event="END_TIMEOUT" target="ACTIVE"/> 
+        <transition event="BUTTON_PRESSED" target="RESULT"/>
 
         <state id="WIN">
             <onenter>
@@ -59,7 +60,6 @@
                 </script>
             </onenter>
 
-            <transition event="BUTTON_PRESSED" target="WIN"/>
         </state>
 
         <state id="LOSE">
@@ -81,7 +81,6 @@
                     <script>ARM_TIMER(50, TIMEOUT);</script>
                 </onenter>
 
-                <transition event="BUTTON_PRESSED" target="LEDON"/>
                 <transition event="TIMEOUT" target="LEDOFF"/>
             </state>
 
@@ -95,7 +94,6 @@
                     </script>
                 </onenter>
 
-                <transition event="BUTTON_PRESSED" target="LEDOFF"/>
                 <transition event="TIMEOUT" target="LEDON"/>
             </state>
         </state>
